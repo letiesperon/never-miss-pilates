@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#
+# Usage:
+#   ./bin/run-flakey-test "bundle exec rspec spec/features/some_spec.rb:10"
+#
+
+FINISH=0
+COUNTER=0
+while [ $FINISH = 0 ]; do
+  eval $1
+  let FINISH=$?
+  let COUNTER=$(( $COUNTER + 1 ))
+  echo $COUNTER
+done

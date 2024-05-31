@@ -1,0 +1,47 @@
+{
+  "name": "never-miss-pilates",
+  "description": "Rails API for all operations regarding https://www.leti.com",
+  "image": "heroku/ruby",
+  "stack": "heroku-22",
+  "repository": "https://github.com/thevillageproject/never-miss-pilates",
+  "keywords": [
+    "ruby",
+    "rails"
+  ],
+  "addons": [
+    "heroku-postgresql",
+    "heroku-redis",
+    "scheduler"
+  ],
+  "environments": {
+    "review": {
+      "addons": [
+        "heroku-postgresql:essential-0",
+        "heroku-redis",
+        "scheduler"
+      ],
+      "scripts": {}
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/metrics"
+    },
+    {
+      "url": "heroku/ruby"
+    },
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-cli.git"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "Standard-2X"
+    },
+    "worker": {
+      "quantity": 1,
+      "size": "Standard-1X"
+    }
+  }
+}

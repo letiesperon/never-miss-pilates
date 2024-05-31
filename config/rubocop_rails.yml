@@ -1,0 +1,43 @@
+Rails/LexicallyScopedActionFilter:
+  Exclude:
+    - app/controllers/**/**
+
+Rails/RakeEnvironment:
+  Exclude:
+    - lib/tasks/linters.rake
+    - lib/tasks/auto_annotate_models.rake
+
+Rails/NotNullColumn:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Environments:
+    - test
+    - development
+    - staging
+    - production
+
+Rails/SkipsModelValidations:
+  Exclude:
+    - db/**/*
+    - spec/**/*
+    - test/**/*
+
+Rails/Output:
+  Enabled: false
+
+Rails/NegateInclude:
+  Exclude:
+    - lib/tasks/linters.rake
+
+Rails/TimeZone:
+  Exclude:
+    - spec/**/*
+    - test/**/*
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Rails/RedundantTravelBack:
+  Exclude:
+    - "spec/spec_helper.rb"

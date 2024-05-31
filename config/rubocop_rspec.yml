@@ -1,0 +1,47 @@
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 6
+
+RSpec/ContextWording:
+  Exclude:
+    - spec/support/shared_contexts/**/*
+
+RSpec/FilePath:
+  Exclude:
+    - spec/integration/**/*
+
+# NOTE. Sometimes we stub classes that have methods defined on runtime such as Stripe objects.
+# In those cases, a verifying double will raise an exception,
+# so we use regular double which will raise an alert on this rule.
+# There is no way to disable this rule for only some double classes.
+RSpec/VerifiedDoubles:
+  Enabled: true
+  Exclude:
+    - spec/integration/**/*
+    - spec/clients/**/*
+
+RSpec/StubbedMock:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
+RSpec/IndexedLet:
+  Enabled: false

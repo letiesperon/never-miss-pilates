@@ -1,0 +1,21 @@
+# Configuration file for Sidekiq.
+# https://github.com/sidekiq/sidekiq/blob/main/examples/config.yml
+# Options here can still be overridden by cmd line args.
+# Place this file at config/sidekiq.yml and Sidekiq will
+# pick it up automatically.
+
+# Scheduled jobs: https://github.com/sidekiq-scheduler/sidekiq-scheduler
+
+---
+:queues:
+  - high
+  - default
+:scheduler:
+  :dynamic: true
+  :enabled: false # todo. enable it
+  :schedule:
+    []
+    # some_work:
+    #   cron: "0/30 %> * * * *" # Every 30 minutes
+    #   class: "MyWorker"
+    #   queue: default

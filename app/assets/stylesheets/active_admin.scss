@@ -1,0 +1,180 @@
+// SASS variable overrides must be declared before loading up Active Admin's styles.
+//
+// To view the variables that Active Admin provides, take a look at
+// `app/assets/stylesheets/active_admin/mixins/_variables.scss` in the
+// Active Admin source.
+//
+// For example, to change the sidebar width:
+// $sidebar-width: 242px;
+//
+// NOTE: After changing this file you will need to precompile assets again
+// for changes to take effect. Commit the changes.
+// bundle exec rake assets:precompile
+
+@import 'active_admin/mixins';
+@import 'active_admin/base';
+@import 'activeadmin_addons/all';
+
+$blue: #678BA0;
+$blue-2: #3278a1;
+$green-1: #67a098;
+$green-2: #68a576;
+$green-3: #a6c9a8;
+
+$leti-orange: #987070;
+$light-orange: #DBB5B5;
+$orange-2: #D10363;
+$red-1: #D10363;
+
+$leti-purple: #888bd6;
+$leti-salmon: #f98c7d;
+$leti-light-blue: #7fc1cc;
+
+$leti-soft-salmon: #ffd8d8;
+$leti-soft-blue: #c2d2f9;
+$leti-soft-green: #c4e9da;
+
+$white: #ffff;
+
+$dark: #384448;
+$dark2: #4d5556;
+$light-grey: #55555584;
+$theme-light-grey: #ecf0f1;
+
+$leti-font-color: #2b2b2b;
+
+// Overrides theme colors:
+// https://github.com/SoftwareBrothers/active_skin/blob/master/app/assets/stylesheets/active_skin.sass
+$skinTextColor: $dark !default
+$skinTextActiveColor: $white !default
+$skinTextTable: $dark2 !default
+$skinActiveColor: $leti-orange !default
+$skinHeaderBck: $dark !default
+$skinHeaderTextColor: $white !default
+$panelHeaderBck: $leti-orange !default
+$panelHeaderTextColor: $white !default
+$skinFontFamily: 'Object Sans Regular', sans-serif !default
+
+$skinLogo: url('/logo-horizontal.png') no-repeat center center;
+
+@import 'active_skin';
+
+#header {
+  h1.site_title {
+    background-size: 65%;
+  }
+  .header-item {
+    top: 0px;
+  }
+
+  // Fixed issue where logout button has different background color:
+  #utility_nav {
+    background: none;
+  }
+}
+
+.status_tag { background-color: $leti-purple }
+
+.status_tag.yes { background: $green-2; }
+.status_tag.no { background: $orange-2; }
+
+.disabled {
+  pointer-events: none; // Makes disabled action items not clickable.
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.button-red {
+  background-color: $orange-2 !important;
+  color: $white !important;
+}
+
+body.logged_in .flash {
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.sidebar_section.panel .filter_form_field {
+  label {
+    color: $dark2;
+  }
+}
+
+.sidebar_section > div {
+  padding: 15px;
+}
+
+.attributes_table.order {
+  img {
+    max-height: 500px;
+    padding: 3px;
+  }
+}
+
+.attributes_table table {
+  th {
+    color: $dark2;
+    font-size: 12px;
+    max-width: 250px;
+    min-width: 100px;
+    width: 30%;
+  }
+  td {
+    color: $dark2;
+    font-size: 12px;
+  }
+}
+
+// Makes form panel a bit more consistent with the details panel:
+form fieldset.inputs {
+  padding: 10px 7px;
+
+  ol > li label {
+    color: $dark2;
+    font-family: $skinFontFamily;
+    font-size: 12px;
+    font-weight: normal;
+    padding: 7px 0;
+    text-transform: uppercase;
+  }
+}
+
+// Fixes margin and header of details panel:
+.panel h3 {
+  color: $leti-orange;
+  font-size: 16px;
+  padding: 11px 15px;
+}
+
+// Fixes issue where hints for boolean fields are being pushed to the right, looking odd:
+li.boolean {
+  label {
+    width: auto !important;
+  }
+
+  p.inline-hints {
+    margin-top: 0 !important;
+  }
+}
+
+.footer { display: none; }
+
+.panel {
+  .panel h3 {
+    font-size: 12px;
+    margin-top: 0px;
+    padding: 6px 11px;
+    color: $dark2;
+  }
+}
+
+.solitary-label-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.light-grey-background {
+  background-color: $theme-light-grey;
+}

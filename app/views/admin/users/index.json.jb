@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+# This view overrides how active admin returns the users JSON response.
+# We need this so we can customize how each user is displayed in the Ajax search select filters
+# Since full_name is not a column in the users table,
+# it does not get serialized on the default response, so we need to manually
+# return it in the JSON response if we want the select AJAX filters to have it available.
+
+@users.map do |user|
+  {
+    id: user.id,
+    full_name: user.full_name
+  }
+end
