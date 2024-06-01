@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_31_235632) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_01_001759) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,6 +32,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_31_235632) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "bookings", force: :cascade do |t|
+    t.datetime "starts_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["starts_at"], name: "index_bookings_on_starts_at", unique: true
+  end
+
+  create_table "desired_bookings", force: :cascade do |t|
+    t.string "day_of_week", null: false
+    t.integer "hour", null: false
+    t.boolean "enabled", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["day_of_week", "hour"], name: "index_desired_bookings_on_day_of_week_and_hour", unique: true
   end
 
 end
