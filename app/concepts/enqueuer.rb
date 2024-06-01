@@ -17,7 +17,7 @@ class Enqueuer
 
   def enqueue!
     desired_bookings.each do |desired_booking|
-      Processor::Worker.perform_asyng(desired_booking:)
+      Processor::Worker.perform_async(desired_booking.id)
     end
   end
 

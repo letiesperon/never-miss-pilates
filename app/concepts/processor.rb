@@ -9,7 +9,7 @@ class Processor
     def perform(desired_booking_id)
       desired_booking = DesiredBooking.find(desired_booking_id)
 
-      new(desired_booking:).process
+      Processor.new(desired_booking:).process
     end
   end
 
