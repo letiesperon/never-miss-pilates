@@ -14,6 +14,8 @@ gem 'puma'
 
 gem 'rack-timeout'
 
+gem 'playwright-ruby-client'
+
 gem 'after_commit_everywhere'
 gem 'bcrypt'
 gem 'bugsnag'

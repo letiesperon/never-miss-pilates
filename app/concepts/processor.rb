@@ -6,6 +6,8 @@ class Processor
   class Worker
     include Sidekiq::Worker
 
+    sidekiq_options queue: :high, retry: false, lock: :until_executed, on_conflict: :reject
+
     def perform(desired_booking_id)
       desired_booking = DesiredBooking.find(desired_booking_id)
 
@@ -33,28 +35,30 @@ class Processor
   attr_reader :desired_booking
 
   def already_booked?
-    Booking.exists?(starts_at: booking_datetime)
+    Booking.exists?(starts_at: datetime)
   end
 
   def booking_datetime
-    @booking_datetime ||= DesiredBookingDecorator.next_datetime(desired_booking)
+    @booking_datetime ||= NextDatetimeCalculator.next_datetime(desired_booking)
   end
 
+  delegate :datetime, to: :booking_datetime
+
   def try_to_book
-    scraper = Scraper.new(booking_datetime)
+    scraper = Scrapper.new(booking_datetime)
     scraper.book
     add_errors(scraper.errors)
   end
 
   def record_booking
-    Booking.create!(starts_at: booking_datetime)
+    Booking.create!(starts_at: datetime)
   end
 
   def log_success
-    Rails.logger.info("Booking created for #{booking_datetime}")
+    Rails.logger.info("Booking created for #{datetime}")
   end
 
   def log_failure
-    Rails.logger.error("Booking failed for #{booking_datetime}")
+    Rails.logger.error("Booking failed for #{datetime}")
   end
 end
