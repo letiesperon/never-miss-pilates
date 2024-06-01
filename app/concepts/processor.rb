@@ -41,7 +41,9 @@ class Processor
   end
 
   def try_to_book
-    Scraper.new(booking_datetime).book
+    scraper = Scraper.new(booking_datetime)
+    scraper.book
+    add_errors(scraper.errors)
   end
 
   def record_booking
