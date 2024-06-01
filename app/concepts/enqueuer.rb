@@ -7,7 +7,7 @@ class Enqueuer
     include Sidekiq::Worker
 
     def perform
-      new.enqueue!
+      Enqueuer.new.enqueue!
     end
   end
 
