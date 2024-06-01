@@ -14,8 +14,7 @@
   :dynamic: true
   :enabled: false # todo. enable it
   :schedule:
-    []
-    # some_work:
-    #   cron: "0/30 %> * * * *" # Every 30 minutes
-    #   class: "MyWorker"
-    #   queue: default
+    scraper_enqueuer:
+      cron: "0/10 * * * *" # Every 10 minutes
+      class: "Enqueuer::Worker"
+      queue: default

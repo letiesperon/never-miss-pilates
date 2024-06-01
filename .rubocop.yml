@@ -112,3 +112,6 @@ RSpec/DescribeClass:
   Exclude:
     - "spec/integration/**/*"
     - "spec/lib/**/*"
+
+Style/Documentation:
+  Enabled: false

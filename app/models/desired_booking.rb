@@ -13,6 +13,8 @@ class DesiredBooking < ApplicationRecord
             uniqueness: { scope: :day_of_week }
 
   validates :enabled, inclusion: { in: [true, false] }
+
+  scope :enabled, -> { where(enabled: true) }
 end
 
 # == Schema Information
