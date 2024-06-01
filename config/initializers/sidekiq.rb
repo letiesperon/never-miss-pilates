@@ -5,13 +5,13 @@ require 'sidekiq/web'
 require 'sidekiq-unique-jobs'
 
 Sidekiq::Web.use(Rack::Auth::Basic) do |user, password|
-  Rack::Utils.secure_compare(::Digest::SHA256.hexdigest(user), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_USER'])) &
-    Rack::Utils.secure_compare(::Digest::SHA256.hexdigest(password), ::Digest::SHA256.hexdigest(ENV['SIDEKIQ_PASSWORD']))
+  Rack::Utils.secure_compare(Digest::SHA256.hexdigest(user), Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_USER', nil))) &
+    Rack::Utils.secure_compare(Digest::SHA256.hexdigest(password), Digest::SHA256.hexdigest(ENV.fetch('SIDEKIQ_PASSWORD', nil)))
 end
 
 Sidekiq.configure_server do |config|
   config.redis = {
-    url: ENV['REDIS_URL'],
+    url: ENV.fetch('REDIS_URL', nil),
     ssl_params: {
       verify_mode: OpenSSL::SSL::VERIFY_NONE
     }
@@ -35,7 +35,7 @@ Sidekiq.configure_server do |config|
   end
 
   config.error_handlers << lambda do |ex, ctx|
-    ::Sidekiq.logger.warn(ex, job: ctx[:job])
+    Sidekiq.logger.warn(ex, job: ctx[:job])
   end
 
   config.client_middleware do |chain|
@@ -51,7 +51,7 @@ end
 
 Sidekiq.configure_client do |config|
   config.redis = {
-    url: ENV['REDIS_URL'],
+    url: ENV.fetch('REDIS_URL', nil),
     ssl_params: {
       verify_mode: OpenSSL::SSL::VERIFY_NONE
     }

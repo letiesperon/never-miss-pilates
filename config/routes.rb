@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  root "admin#root"
+  root 'admin#root'
 
   match '*path', to: 'application#not_found', constraints: ->(req) { req.format == :html }, via: :all
 end

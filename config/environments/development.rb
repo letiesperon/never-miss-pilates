@@ -21,7 +21,7 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join('tmp', 'caching-dev.txt').exist?
+  if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
 
     config.cache_store = :memory_store
@@ -52,8 +52,8 @@ Rails.application.configure do
   config.active_record.verbose_query_logs = true
   config.lograge_sql.keep_default_active_record_log = true
 
-  formatter = ::Ougai::Formatters::Readable.new
-  config.logger = ::Ougai::Logger.new($stdout, formatter:)
+  formatter = Ougai::Formatters::Readable.new
+  config.logger = Ougai::Logger.new($stdout, formatter:)
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

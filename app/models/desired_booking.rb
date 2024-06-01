@@ -3,7 +3,8 @@
 class DesiredBooking < ApplicationRecord
   extend Enumerize
 
-  enumerize :day_of_week, in: %i[monday tuesday wednesday thursday friday saturday sunday], predicates: true
+  enumerize :day_of_week, in: %i[monday tuesday wednesday thursday friday saturday sunday],
+                          predicates: true
 
   validates :day_of_week, presence: true
 

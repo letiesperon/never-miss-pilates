@@ -60,7 +60,5 @@ def sanitize(value)
     filter.filter(value)
   when Array
     value.map { |element| sanitize(element) }
-  else
-    nil
   end
 end

@@ -15,9 +15,9 @@ task :linters do
     end
   }.parse!
 
-  # get an array of the files changed from master
+  # get an array of the files changed from main
   # (they need to be filtered by certain linters)
-  files_diff = `git diff --diff-filter=ACMRTUXB --name-only origin/master...`.split("\n")
+  files_diff = `git diff --diff-filter=ACMRTUXB --name-only origin/main...`.split("\n")
   unless $CHILD_STATUS.success?
     warn 'ERROR: could not obtain the list of changed files.'
     exit false

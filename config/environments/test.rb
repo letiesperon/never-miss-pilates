@@ -27,8 +27,8 @@ Rails.application.configure do
   config.lograge_sql.keep_default_active_record_log = true
 
   logger_stream = ENV['LOG_STDOUT'] == 'true' ? $stdout : '/dev/null'
-  formatter = ::Ougai::Formatters::Readable.new
-  config.logger = ::Ougai::Logger.new(logger_stream, formatter:)
+  formatter = Ougai::Formatters::Readable.new
+  config.logger = Ougai::Logger.new(logger_stream, formatter:)
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
