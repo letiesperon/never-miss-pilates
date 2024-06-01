@@ -1,0 +1,114 @@
+inherit_from:
+  - .rubocop_todo.yml
+  - ./config/rubocop_rails.yml
+  - ./config/rubocop_rspec.yml
+
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+inherit_mode:
+  merge:
+    - Exclude
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - spec/**/*
+
+Lint/SymbolConversion:
+  EnforcedStyle: consistent
+
+RSpec/LeakyConstantDeclaration:
+  Exclude:
+    - spec/**/*
+
+RSpec/VerifiedDoubles:
+  Exclude:
+    - spec/**/*
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - vendor/**/*
+    - .circleci/*
+    - bin/bundle
+    - db/migrate/*
+    - db/schema.rb
+    - rubocop/**/*.rb
+
+Layout/LineLength:
+  Max: 100
+  AllowedPatterns: ['\A\s*#'] # To exclude this cop from comments
+  Exclude:
+    - config/**/*
+
+RSpec/FilePath:
+  Exclude:
+    - spec/controllers/admin/**/*
+
+Metrics/BlockLength:
+  Max: 30
+  Exclude:
+    - config/**/*
+    - app/admin/**/*
+    - spec/**/*
+
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/AbcSize:
+  Exclude:
+    - spec/**/*
+
+Style/BlockDelimiters:
+  EnforcedStyle: braces_for_chaining
+
+Style/Documentation:
+  Enabled: false
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  AllowParenthesesInChaining: false
+  AllowedPatterns:
+    - and
+    - to
+    - not_to
+    - describe
+  Include:
+    - "spec/**/*_spec.rb"
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - lib/tasks/linters.rake
+    - spec/**/*
+
+Lint/EmptyBlock:
+  Exclude:
+    - spec/**/*
+
+Lint/SuppressedException:
+  Enabled: false
+
+Style/RescueStandardError:
+  Enabled: false
+
+Naming/MethodParameterName:
+  AllowedNames:
+    - e
+    - by
+    - id
+
+Style/HashSyntax:
+  Enabled: true
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - "spec/integration/**/*"
+    - "spec/lib/**/*"
