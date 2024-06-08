@@ -55,3 +55,32 @@ foreman start -f Procfile.dev
 ```
 
 Then access the API on [http://0.0.0.0:5100](http://0.0.0.0:5100)
+
+
+### Running the tasks
+
+Enqueue all the desired bookings jobs with:
+
+```ruby
+Enqueuer::Worker.new.perform
+```
+
+Attempt a specific desired booking:
+
+```ruby
+desired_booking = DesiredBooking.last
+Processor.new(desired_booking:).process
+```
+
+### Heroku setup:
+
+```ruby
+heroku buildpacks:add heroku/nodejs -a never-miss-pilates
+heroku buildpacks:set https://github.com/mxschmitt/heroku-playwright-buildpack.git -a never-miss-pilates
+```
+
+
+### Docs
+
+* https://playwright-ruby-client.vercel.app/docs/article/guides/rails_integration
+* https://github.com/YusukeIwaki/playwright-ruby-client
