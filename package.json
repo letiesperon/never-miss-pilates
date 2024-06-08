@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "playwright": "^1.44.1"
+  },
+  "scripts": {
+    "heroku-cleanup": "yarn run playwright install [chromium | webkit | firefox]"
   }
 }
