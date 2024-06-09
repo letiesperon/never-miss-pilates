@@ -42,7 +42,6 @@ gem 'sprockets-rails'
 
 gem 'selenium-webdriver'
 gem 'capybara-screenshot'
-gem 'webdrivers'
 
 # Logging:
 # Compact Rails controller logs in a single log per request:

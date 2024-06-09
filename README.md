@@ -1,7 +1,5 @@
 # never-miss-pilates
 
-This is my app.
-
 ## Pre requisites
 
 - Postgres
@@ -26,14 +24,6 @@ rbenv install 3.2.2; rbenv local 3.2.2;
 gem install bundler
 bundle install
 gem install foreman
-```
-
-### Setup libraries:
-
-```console
-npm install
-./node_modules/.bin/playwright install
-npm install playwright
 ```
 
 ### Initialize the databases:
@@ -84,13 +74,8 @@ Processor.new(desired_booking:).process
 
 ### Heroku setup:
 
+Relies on the [heroku-buildpack-chrome-for-testing](https://github.com/heroku/heroku-buildpack-chrome-for-testing). Add it with:
+
 ```ruby
-heroku buildpacks:add heroku/nodejs -a never-miss-pilates
-heroku buildpacks:set https://github.com/mxschmitt/heroku-playwright-buildpack.git -a never-miss-pilates
+heroku buildpacks:add -i 1 heroku-community/chrome-for-testing -a never-miss-pilates
 ```
-
-
-### Docs
-
-* https://playwright-ruby-client.vercel.app/docs/article/guides/rails_integration
-* https://github.com/YusukeIwaki/playwright-ruby-client
