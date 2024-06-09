@@ -15,6 +15,12 @@ class Scrapper
 
   attr_reader :booking_succeeded
 
+  class ClassNotBookableError < StandardError
+    def skip_bugsnag?
+      true
+    end
+  end
+
   def initialize(booking_datetime)
     @booking_datetime = booking_datetime
     @booking_succeeded = nil
@@ -35,7 +41,7 @@ class Scrapper
       verify_login
       repeat_try_book
     rescue => e
-      handle_error(e)
+      handle_unexpected_exception(e)
     ensure
       quit_driver
     end
@@ -95,10 +101,13 @@ class Scrapper
       select_time
       recheck_if_booked_or_confirm
       break if booking_succeeded
-    rescue => e
-      handle_error(e)
+    rescue ClassNotBookableError => e
+      handle_class_not_bookable(e)
       sleep_random
       visit_pilates_page
+    rescue => e
+      handle_unexpected_exception(e)
+      break
     end
   end
 
@@ -118,7 +127,7 @@ class Scrapper
     class_list = element[:class]
 
     # this appears for non-bookable slots:
-    raise "Date #{date} is not bookable" if class_list.include?('prev-date')
+    raise ClassNotBookableError, "Date #{date} is not bookable" if class_list.include?('prev-date')
 
     Rails.logger.info("Date #{date} is bookable")
     span_element = element.find('span')
@@ -192,10 +201,17 @@ class Scrapper
     visit('/')
   end
 
-  def handle_error(e)
-    Rails.logger.warn("[Scrapper] Could not book class for #{datetime}: #{e.message}")
+  def handle_class_not_bookable(e)
+    Rails.logger.info("[Scrapper] Class for #{datetime} is not bookable: #{e.message}")
+    @booking_succeeded = false
+    add_error(:base, e.message)
+  end
+
+  def handle_unexpected_exception(e)
+    Rails.logger.error("[Scrapper] Exception booking class for #{datetime}: #{e.message}")
     @booking_succeeded = false
     add_error(:base, e.inspect)
+    ErrorHandling.notify(e)
   end
 
   def quit_driver
