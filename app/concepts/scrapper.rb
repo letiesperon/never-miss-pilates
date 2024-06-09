@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/dsl'
 require 'selenium-webdriver'
+require 'webdrivers'
 
 class Scrapper
   USERNAME = ENV.fetch('CLT_USERNAME')
@@ -13,17 +14,19 @@ class Scrapper
   def initialize(booking_datetime)
     @booking_datetime = booking_datetime
 
-    Capybara.register_driver :selenium do |app|
-      options = Selenium::WebDriver::Chrome::Options.new
-      options.add_argument('--headless') if HEADLESS
+    Capybara.register_driver :selenium_chrome do |app|
+      options = ::Selenium::WebDriver::Chrome::Options.new
+      options.add_argument('--headless')
       options.add_argument('--disable-gpu')
       options.add_argument('--no-sandbox')
       options.add_argument('--disable-dev-shm-usage')
+      options.add_argument('window-size=1920,1080')
+      options.add_argument('--remote-debugging-port=9222')
 
       Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
     end
 
-    Capybara.default_driver = :selenium
+    Capybara.default_driver = :selenium_chrome
     Capybara.app_host = 'https://cltapp.club/reformer/pilates-reformer/'
   end
 
