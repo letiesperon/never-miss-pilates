@@ -92,6 +92,10 @@ module AppService
     raise ActiveRecord::Rollback, errors.full_messages
   end
 
+  def clear_errors
+    @errors = nil
+  end
+
   def with_transaction(&)
     ActiveRecord::Base.transaction(&)
   end
