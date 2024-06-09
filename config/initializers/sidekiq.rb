@@ -20,7 +20,10 @@ Sidekiq.configure_server do |config|
   config.death_handlers << lambda { |job, ex|
     args = job['args']
     context = args.present? ? { api_name: args.first, global_id: args.second, additional_args: args.third } : {}
-    ErrorHandling.notify(ex, context)
+
+    Bugsnag.notify(ex, context) do |report|
+      report.add_tab(:sidekiq, context)
+    end
   }
 
   config.logger = Rails.logger

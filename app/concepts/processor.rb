@@ -6,7 +6,7 @@ class Processor
   class Worker
     include Sidekiq::Worker
 
-    sidekiq_options queue: :high, retry: false
+    sidekiq_options queue: :high, retry: false, lock: :until_executed, on_conflict:
 
     def perform(desired_booking_id)
       desired_booking = DesiredBooking.find(desired_booking_id)
