@@ -13,4 +13,11 @@ class ErrorHandling
       true
     end
   end
+
+  def self.warn(message, metadata = {})
+    Bugsnag.notify(message) do |event|
+      event.severity = 'warning'
+      event.add_metadata(:diagnostics, metadata)
+    end
+  end
 end

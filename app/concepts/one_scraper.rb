@@ -69,6 +69,8 @@ class OneScraper
     # this appears for non-bookable slots:
     raise ClassNotBookableError, "Date #{date} is not bookable" if class_list.include?('prev-date')
 
+    ErrorHandling.warn('Slot available!!', { datetime: })
+
     Rails.logger.info("[Scraper] Date #{date} is bookable")
     span_element = element.find('span')
     raise 'Span element not found within the date element' unless span_element
