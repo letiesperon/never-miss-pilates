@@ -3,6 +3,7 @@ require 'playwright'
 class Scrapper
   USERNAME = ENV.fetch('CLT_USERNAME')
   PASSWORD = ENV.fetch('CLT_PASSWORD')
+  HEADLESS = ENV.fetch('HEADLESS', 'true') == 'true'
 
   include AppService
 
@@ -34,7 +35,7 @@ class Scrapper
 
   def with_playwright
     Playwright.create(playwright_cli_executable_path: './node_modules/.bin/playwright') do |playwright|
-      browser = playwright.chromium.launch(headless: false)
+      browser = playwright.chromium.launch(headless: HEADLESS)
       context = browser.new_context
       @page = context.new_page
 

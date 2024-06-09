@@ -41,3 +41,5 @@
 
 \.DS_Store
 *.dump
+
+/node_modules
