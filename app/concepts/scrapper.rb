@@ -13,13 +13,17 @@ class Scrapper
   include Capybara::DSL
   include AppService
 
-  attr_reader :booking_success
+  attr_reader :booking_succeeded
 
   def initialize(booking_datetime)
     @booking_datetime = booking_datetime
-    @booking_success = nil
+    @booking_succeeded = nil
 
     initialize_capybara
+  end
+
+  def already_booked?
+    Booking.exists?(starts_at: datetime)
   end
 
   def book
@@ -89,8 +93,8 @@ class Scrapper
       log_try(i)
       select_date
       select_time
-      confirm_booking
-      break if booking_success
+      recheck_if_booked_or_confirm
+      break if booking_succeeded
     rescue => e
       handle_error(e)
       sleep_random
@@ -141,6 +145,24 @@ class Scrapper
     Rails.logger.info("Clicked on 'Reservar Turno' button")
   end
 
+  def recheck_if_booked_or_confirm
+    with_lock do
+      set_skipped_already_booked if already_booked?
+
+      confirm_booking
+    end
+  end
+
+  def with_lock(&)
+    desired_booking.with_lock(&)
+  end
+
+  def set_skipped_already_booked
+    @skipped_already_booked = true
+    clear_errors
+    Rails.logger.info("[Scrapper] Class for #{booking_datetime} was already booked")
+  end
+
   def confirm_booking
     Rails.logger.info('Confirming booking...')
 
@@ -154,9 +176,9 @@ class Scrapper
   end
 
   def set_success
-    @booking_success = true
+    @booking_succeeded = true
     clear_errors
-    Rails.logger.info("Successfully booked class for #{booking_datetime}")
+    Rails.logger.info("[Scrapper] Successfully booked class for #{booking_datetime}")
   end
 
   def sleep_random
@@ -172,7 +194,7 @@ class Scrapper
 
   def handle_error(e)
     Rails.logger.warn("[Scrapper] Could not book class for #{datetime}: #{e.message}")
-    @booking_success = false
+    @booking_succeeded = false
     add_error(:base, e.inspect)
   end
 

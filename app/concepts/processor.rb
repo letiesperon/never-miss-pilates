@@ -20,8 +20,6 @@ class Processor
   end
 
   def process
-    return if already_booked?
-
     try_to_book
 
     if success?
@@ -33,10 +31,6 @@ class Processor
   end
 
   attr_reader :desired_booking
-
-  def already_booked?
-    Booking.exists?(starts_at: datetime)
-  end
 
   def booking_datetime
     @booking_datetime ||= NextDatetimeCalculator.next_datetime(desired_booking)
@@ -51,11 +45,11 @@ class Processor
   end
 
   def record_booking
-    Booking.create!(starts_at: datetime)
+    Booking.find_or_create_by!(starts_at: datetime)
   end
 
   def log_success
-    Rails.logger.info("[Processor] Booking created for #{datetime}")
+    Rails.logger.info("[Processor] Booking succeeded for #{datetime}")
   end
 
   def log_failure
