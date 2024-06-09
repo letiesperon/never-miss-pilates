@@ -12,7 +12,7 @@
   - default
 :scheduler:
   :dynamic: true
-  :enabled: false # todo. enable it
+  :enabled: true
   :schedule:
     scraper_enqueuer_morning_to_midnight:
       cron: "*/5 10-23 * * *" # Every 5 minutes from 10:00 to 23:59 UTC (7:00 AM to 8:59 PM UYU)
@@ -29,7 +29,12 @@
       class: "Enqueuer::Worker"
       queue: default
 
+    scraper_third_enqueuer_saturday_evening:
+      cron: "59 21 * * 6" # At 6:59 PM UYU on Saturdays
+      class: "Enqueuer::Worker"
+      queue: default
+
     scraper_second_enqueuer_saturday_evening:
-      cron: "1-10 22 * * 6" # Every minute for the first 10 minutes on Saturdays at 22:59 UTC (7pm UYU)
+      cron: "1-10 22 * * 6" # Every minute for the first 10 minutes on Saturdays at 7pm UYU
       class: "Enqueuer::Worker"
       queue: default

@@ -39,7 +39,7 @@ class Scrapper
       confirm_booking
     rescue => e
       Rails.logger.warn("[Scrapper] Failed to book class for #{datetime}: #{e.message}")
-      add_error(:base, e.message)
+      add_error(:base, e.inspect)
     ensure
       Capybara.current_session.driver.quit
     end
