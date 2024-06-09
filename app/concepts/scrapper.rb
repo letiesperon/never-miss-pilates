@@ -199,6 +199,9 @@ class Scrapper
   end
 
   def quit_driver
-    Capybara.current_session.driver.quit
+    Capybara.current_session&.driver&.quit
+  rescue => e
+    Rails.logger.warn("[Scrapper] Could not quit driver: #{e.message}")
+    ErrorHandling.notify(e)
   end
 end
