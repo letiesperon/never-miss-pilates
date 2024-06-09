@@ -28,11 +28,19 @@ bundle install
 gem install foreman
 ```
 
-Make sure you have `postgres` and `redis` running.
+### Setup libraries:
 
-Copy the file `.env.example` as `.env` and adjust if needed. The keys are just sample keys, so if you need them, ask a fellow developer.
+```console
+npm install
+./node_modules/.bin/playwright install
+npm install playwright
+```
 
 ### Initialize the databases:
+
+Make sure you have `postgres` running.
+
+Copy the file `.env.example` as `.env` and adjust if needed. The keys are just sample keys, so if you need them, ask a fellow developer.
 
 ```console
 rake db:create; rake db:schema:load
@@ -47,6 +55,8 @@ bundle exec rspec
 ```
 
 ## Starting the server:
+
+Make sure you have `postgres` and `redis` running.
 
 You can use foreman to start the server so you don't have to start sidekiq in a different terminal:
 
