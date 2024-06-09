@@ -6,7 +6,7 @@ class Processor
   class Worker
     include Sidekiq::Worker
 
-    sidekiq_options queue: :high, retry: false, lock: :until_executed, on_conflict: :reject
+    sidekiq_options queue: :high, retry: false
 
     def perform(desired_booking_id)
       desired_booking = DesiredBooking.find(desired_booking_id)
@@ -55,10 +55,10 @@ class Processor
   end
 
   def log_success
-    Rails.logger.info("Booking created for #{datetime}")
+    Rails.logger.info("[Processor] Booking created for #{datetime}")
   end
 
   def log_failure
-    Rails.logger.error("Booking failed for #{datetime}")
+    Rails.logger.info("[Processor] Booking failed for #{datetime}")
   end
 end

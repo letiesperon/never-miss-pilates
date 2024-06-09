@@ -14,8 +14,6 @@ gem 'puma'
 
 gem 'rack-timeout'
 
-gem 'playwright-ruby-client'
-
 gem 'after_commit_everywhere'
 gem 'bcrypt'
 gem 'bugsnag'
@@ -41,6 +39,10 @@ gem 'draper' # Decorators
 gem 'jb' # Override JSON route views
 gem 'sassc-rails'
 gem 'sprockets-rails'
+
+gem 'selenium-webdriver'
+gem 'capybara-screenshot'
+gem 'webdrivers'
 
 # Logging:
 # Compact Rails controller logs in a single log per request:

@@ -2,13 +2,12 @@ require 'capybara'
 require 'capybara/dsl'
 require 'selenium-webdriver'
 
-class Scrapper
+class CapybaraScraper
   USERNAME = ENV.fetch('CLT_USERNAME')
   PASSWORD = ENV.fetch('CLT_PASSWORD')
   HEADLESS = ENV.fetch('HEADLESS', 'true') == 'true'
 
   include Capybara::DSL
-  include AppService
 
   def initialize(booking_datetime)
     @booking_datetime = booking_datetime
@@ -28,21 +27,17 @@ class Scrapper
   end
 
   def book
-    Rails.logger.info("[Scrapper] Starting booking process for #{datetime}")
+    Rails.logger.info("Starting booking process for #{datetime}")
 
-    begin
-      visit('/')
-      login
-      verify_login
-      select_date
-      select_time
-      confirm_booking
-    rescue => e
-      Rails.logger.warn("[Scrapper] Failed to book class for #{datetime}: #{e.message}")
-      add_error(:base, e.message)
-    ensure
-      Capybara.current_session.driver.quit
-    end
+    visit('/')
+    login
+    verify_login
+    select_date
+    select_time
+    confirm_booking
+  rescue => e
+    Rails.logger.error("Failed to book class for #{datetime}: #{e.message}")
+    raise e
   end
 
   private
@@ -131,5 +126,9 @@ class Scrapper
       raise "'Confirmo Reserva' button not found"
     end
     sleep 5
+  end
+
+  def day_to_number(day)
+    %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday].index(day)
   end
 end
