@@ -62,14 +62,13 @@ Then access the API on [http://0.0.0.0:5100](http://0.0.0.0:5100)
 Enqueue all the desired bookings jobs with:
 
 ```ruby
-Enqueuer::Worker.new.perform
+AllScraper::Worker.perform_async
 ```
 
-Attempt a specific desired booking:
+Or run it in a rails console with:
 
 ```ruby
-desired_booking = DesiredBooking.last
-Processor.new(desired_booking:).process
+AllScraper.new(retries: 1).perform
 ```
 
 ### Heroku setup:

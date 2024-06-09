@@ -4,6 +4,15 @@ ActiveAdmin.register DesiredBooking do
   menu priority: 2
   permit_params :day_of_week, :hour, :enabled
 
+  collection_action :trigger_scraper, method: :post do
+    AllScraper::Worker.perform_async
+    redirect_to collection_path, notice: 'Scraper enqueued'
+  end
+
+  action_item :trigger_scraper, only: :index do
+    link_to 'Run Scraper', trigger_scraper_admin_desired_bookings_path, method: :post
+  end
+
   index do
     selectable_column
     id_column

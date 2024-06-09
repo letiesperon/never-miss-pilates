@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class AllScrapper
+class AllScraper
   PILATES_URL = 'https://cltapp.club/reformer/pilates-reformer/'
   USERNAME = ENV.fetch('CLT_USERNAME')
   PASSWORD = ENV.fetch('CLT_PASSWORD')
-  RETRIES = 20
+  DEFAULT_RETRIES = 20
   TIME_RANGE_BETWEEN_RETRIALS = 3..10
   HEADLESS = ENV.fetch('HEADLESS', 'true') == 'true'
 
@@ -13,27 +13,20 @@ class AllScrapper
 
     sidekiq_options queue: :high, retry: false
 
-    def perform
-      AllScrapper.new.process
+    def perform(retries = DEFAULT_RETRIES)
+      AllScraper.new(retries:).perform
     end
   end
 
   include Capybara::DSL
   include AppService
 
-  attr_reader :booking_succeeded
-
-  class ClassNotBookableError < StandardError
-    def skip_bugsnag?
-      true
-    end
-  end
-
-  def initialize
+  def initialize(retries: DEFAULT_RETRIES)
+    @retries = retries
     initialize_capybara
   end
 
-  def process
+  def perform
     log_start
 
     begin
@@ -41,6 +34,7 @@ class AllScrapper
       login
       verify_login
       try_many_times
+      log_end
     rescue => e
       handle_unexpected_exception(e)
     ensure
@@ -49,6 +43,8 @@ class AllScrapper
   end
 
   private
+
+  attr_reader :retries
 
   def initialize_capybara
     Capybara.register_driver :selenium_chrome do |app|
@@ -68,7 +64,7 @@ class AllScrapper
   end
 
   def log_start
-    Rails.logger.info('[AllScrapper] Starting booking process')
+    Rails.logger.info('[AllScraper] Starting booking perform')
   end
 
   def login
@@ -92,11 +88,13 @@ class AllScrapper
   end
 
   def try_many_times
-    (1..RETRIES).each do |i|
+    (1..retries).each do |i|
       break if no_bookings?
 
       log_try(i)
       try_each_desired_booking
+      next if i == retries # (no need to sleep if it's the last try)
+
       sleep_random
       visit_pilates_page
     rescue => e
@@ -114,14 +112,14 @@ class AllScrapper
   end
 
   def log_try(i)
-    Rails.logger.info("[AllScrapper] Attempt ##{i} to book classes")
+    Rails.logger.info("[AllScraper] Attempt ##{i} to book classes")
   end
 
   def try_each_desired_booking
     pending_bookings.find_each do |desired_booking|
-      scrapper = OneScrapper.new(desired_booking)
-      scrapper.process
-      add_errors(scrapper.errors)
+      scraper = OneScraper.new(desired_booking)
+      scraper.perform
+      add_errors(scraper.errors)
     end
   end
 
@@ -137,16 +135,21 @@ class AllScrapper
   end
 
   def handle_unexpected_exception(e)
-    Rails.logger.error("[AllScrapper] Unexpected exception: #{e.message}")
-    @booking_succeeded = false
+    Rails.logger.error("[AllScraper] Unexpected exception: #{e.message}")
     add_error(:base, e.inspect)
     ErrorHandling.notify(e)
   end
 
   def quit_driver
+    Capybara.reset_sessions!
+    Capybara.use_default_driver
     Capybara.current_session&.driver&.quit
   rescue => e
-    Rails.logger.warn("[AllScrapper] Could not quit driver: #{e.message}")
+    Rails.logger.warn("[AllScraper] Could not quit driver: #{e.message}")
     ErrorHandling.notify(e)
+  end
+
+  def log_end
+    Rails.logger.info('[AllScraper] Finished')
   end
 end

@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-class OneScrapper
+class OneScraper
   include Capybara::DSL
   include AppService
-
-  attr_reader :booking_succeeded
 
   class ClassNotBookableError < StandardError
     def skip_bugsnag?
@@ -14,10 +12,9 @@ class OneScrapper
 
   def initialize(desired_booking)
     @desired_booking = desired_booking
-    @booking_succeeded = nil
   end
 
-  def process
+  def perform
     return if already_booked?
 
     log_start
@@ -55,15 +52,15 @@ class OneScrapper
   end
 
   def log_start
-    Rails.logger.info("[Scrapper] Starting to book class for #{datetime}")
+    Rails.logger.info("[Scraper] Starting to book class for #{datetime}")
   end
 
   def select_date
-    Rails.logger.info("[Scrapper] About to click on date: #{date_s}")
+    Rails.logger.info("[Scraper] About to click on date: #{date_s}")
 
     selector = "div[data-date='#{date_s}']"
 
-    Rails.logger.info("[Scrapper] Waiting for date element: #{selector}")
+    Rails.logger.info("[Scraper] Waiting for date element: #{selector}")
     raise "Date element #{selector} not found" unless page.has_selector?(selector, wait: 90)
 
     element = find(selector)
@@ -72,19 +69,19 @@ class OneScrapper
     # this appears for non-bookable slots:
     raise ClassNotBookableError, "Date #{date} is not bookable" if class_list.include?('prev-date')
 
-    Rails.logger.info("[Scrapper] Date #{date} is bookable")
+    Rails.logger.info("[Scraper] Date #{date} is bookable")
     span_element = element.find('span')
     raise 'Span element not found within the date element' unless span_element
 
     element.click
     span_element.click # TODO. sometimes clicking in both is needed, sometimes it closes the modal.
-    Rails.logger.info('[Scrapper] Clicked on date element')
+    Rails.logger.info('[Scraper] Clicked on date element')
   end
 
   def select_time
-    Rails.logger.info("[Scrapper] About to choose time: #{time}")
+    Rails.logger.info("[Scraper] About to choose time: #{time}")
 
-    Rails.logger.info("[Scrapper] Waiting for timeslot containing the text: #{time}")
+    Rails.logger.info("[Scraper] Waiting for timeslot containing the text: #{time}")
     raise "Timeslot for #{time} not found" unless page.has_content?(time, wait: 90)
 
     timeslot = find('span.timeslot-range', text: time)
@@ -92,13 +89,13 @@ class OneScrapper
                            "./ancestor::div[contains(@class, 'timeslot')]//button[contains(@class, 'new-appt button')]")
     raise "'Reservar Turno' button not found for the timeslot #{time}" unless button
 
-    Rails.logger.info("[Scrapper] Clicking 'Reservar Turno' button for timeslot #{time}")
+    Rails.logger.info("[Scraper] Clicking 'Reservar Turno' button for timeslot #{time}")
     button.click
-    Rails.logger.info("[Scrapper] Clicked on 'Reservar Turno' button")
+    Rails.logger.info("[Scraper] Clicked on 'Reservar Turno' button")
   end
 
   def confirm_booking
-    Rails.logger.info('[Scrapper] Confirming booking...')
+    Rails.logger.info('[Scraper] Confirming booking...')
 
     unless page.has_selector?('#submit-request-appointment', wait: 30)
       raise "'Confirmo Reserva' button not found"
@@ -108,7 +105,7 @@ class OneScrapper
   end
 
   def log_success
-    Rails.logger.info("[Scrapper] Successfully booked class for #{datetime}")
+    Rails.logger.info("[Scraper] Successfully booked class for #{datetime}")
   end
 
   def record_booking
@@ -116,7 +113,7 @@ class OneScrapper
   end
 
   def handle_class_not_bookable(e)
-    Rails.logger.info("[Scrapper] Class for #{datetime} is not bookable")
+    Rails.logger.info("[Scraper] Class for #{datetime} is not bookable")
     add_error(:base, e.message)
   end
 end
