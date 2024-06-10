@@ -69,7 +69,7 @@ class OneScraper
     # this appears for non-bookable slots:
     raise ClassNotBookableError, "Date #{date} is not bookable" if class_list.include?('prev-date')
 
-    ErrorHandling.warn('Slot available!!', { datetime: })
+    ErrorHandling.warn("Slots available on #{date} #{SecureRandom.hex(4)}", { date:, time: })
 
     Rails.logger.info("[Scraper] Date #{date} is bookable")
     span_element = element.find('span')
@@ -84,11 +84,14 @@ class OneScraper
     Rails.logger.info("[Scraper] About to choose time: #{time}")
 
     Rails.logger.info("[Scraper] Waiting for timeslot containing the text: #{time}")
+    byebug
     raise "Timeslot for #{time} not found" unless page.has_content?(time, wait: 90)
 
     timeslot = find('span.timeslot-range', text: time)
+    byebug
     button = timeslot.find(:xpath,
                            "./ancestor::div[contains(@class, 'timeslot')]//button[contains(@class, 'new-appt button')]")
+                           byebug
     raise "'Reservar Turno' button not found for the timeslot #{time}" unless button
 
     Rails.logger.info("[Scraper] Clicking 'Reservar Turno' button for timeslot #{time}")
