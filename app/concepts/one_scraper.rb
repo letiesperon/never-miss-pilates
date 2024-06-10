@@ -76,22 +76,32 @@ class OneScraper
     raise 'Span element not found within the date element' unless span_element
 
     element.click
-    span_element.click # TODO. sometimes clicking in both is needed, sometimes it closes the modal.
+
     Rails.logger.info('[Scraper] Clicked on date element')
+
+    unless modal_opened?
+      # Sometimes clicking in both is needed, sometimes it closes the modal.
+      span_element.click
+      Rails.logger.info('[Scraper] Clicked on span date element (second time)')
+    end
+  end
+
+  def modal_opened?
+    page.has_content?('Esta solicitando una reserva para', wait: 15)
   end
 
   def select_time
     Rails.logger.info("[Scraper] About to choose time: #{time}")
 
     Rails.logger.info("[Scraper] Waiting for timeslot containing the text: #{time}")
-    byebug
+
     raise "Timeslot for #{time} not found" unless page.has_content?(time, wait: 90)
 
     timeslot = find('span.timeslot-range', text: time)
-    byebug
+
     button = timeslot.find(:xpath,
                            "./ancestor::div[contains(@class, 'timeslot')]//button[contains(@class, 'new-appt button')]")
-                           byebug
+
     raise "'Reservar Turno' button not found for the timeslot #{time}" unless button
 
     Rails.logger.info("[Scraper] Clicking 'Reservar Turno' button for timeslot #{time}")
