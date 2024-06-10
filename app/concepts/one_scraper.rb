@@ -79,15 +79,15 @@ class OneScraper
 
     Rails.logger.info('[Scraper] Clicked on date element')
 
-    unless modal_opened?
-      # Sometimes clicking in both is needed, sometimes it closes the modal.
+    unless time_slots_opened?
+      # Sometimes clicking in both is needed, sometimes it closes the slots component.
       span_element.click
       Rails.logger.info('[Scraper] Clicked on span date element (second time)')
     end
   end
 
-  def modal_opened?
-    page.has_content?('Esta solicitando una reserva para', wait: 15)
+  def time_slots_opened?
+    page.has_content?('Disponibles el', wait: 15)
   end
 
   def select_time
