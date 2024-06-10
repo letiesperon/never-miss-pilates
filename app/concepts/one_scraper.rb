@@ -29,6 +29,7 @@ class OneScraper
     end
 
     log_success
+    visit_pilates_page
   rescue ClassNotBookableError => e
     handle_class_not_bookable(e)
   end
@@ -79,11 +80,11 @@ class OneScraper
 
     Rails.logger.info('[Scraper] Clicked on date element')
 
-    unless time_slots_opened?
-      # Sometimes clicking in both is needed, sometimes it closes the slots component.
-      span_element.click
-      Rails.logger.info('[Scraper] Clicked on span date element (second time)')
-    end
+    return if time_slots_opened?
+
+    # Sometimes clicking in both is needed, sometimes it closes the slots component.
+    span_element.click
+    Rails.logger.info('[Scraper] Clicked on span date element (second time)')
   end
 
   def time_slots_opened?
@@ -125,6 +126,11 @@ class OneScraper
 
   def record_booking
     Booking.find_or_create_by!(starts_at: datetime)
+  end
+
+  def visit_pilates_page
+    Rails.logger.info('[Scraper] Visiting Pilates page')
+    visit('/')
   end
 
   def handle_class_not_bookable(e)
