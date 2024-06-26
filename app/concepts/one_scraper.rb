@@ -98,7 +98,7 @@ class OneScraper
 
     raise "Timeslot for #{time} not found" unless page.has_content?(time, wait: 90)
 
-    timeslot = find('span.timeslot-range', text: time)
+    timeslot = find('span.timeslot-range', text: "#{time} - ")
 
     button = timeslot.find(:xpath,
                            "./ancestor::div[contains(@class, 'timeslot')]//button[contains(@class, 'new-appt button')]")
