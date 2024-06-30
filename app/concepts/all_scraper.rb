@@ -31,8 +31,7 @@ class AllScraper
 
     begin
       visit_pilates_page
-      login
-      verify_login
+      login_if_needed
       try_many_times
       log_end
     rescue => e
@@ -67,6 +66,24 @@ class AllScraper
     Rails.logger.info('[AllScraper] Starting booking perform')
   end
 
+  def login_if_needed
+    if logged_in?
+      Rails.logger.info('[AllScraper] Already logged in. Skipping login.')
+    elsif seeing_login_form?
+      login
+    else
+      raise '[AllScraper] Login form not found. But also not logged in.'
+    end
+  end
+
+  def logged_in?
+    page.has_content?('Pilates Reformer', wait: 90)
+  end
+
+  def seeing_login_form?
+    page.has_content?('Nombre de usuario', wait: 90)
+  end
+
   def login
     Rails.logger.info('About to submit login form')
 
@@ -75,16 +92,16 @@ class AllScraper
     check 'rememberme'
 
     find('input[name="login"]').click
+
+    verify_is_logged_in
   end
 
-  def verify_login
-    Rails.logger.info("Logged in. Checking for 'Pilates Reformer'")
+  def verify_is_logged_in
+    Rails.logger.info("[AllScraper] Logged in. Checking for 'Pilates Reformer'")
 
-    unless page.has_content?('Pilates Reformer', wait: 90)
-      raise "Login failed or 'Pilates Reformer' not found"
-    end
+    raise "Login failed or 'Pilates Reformer' not found" unless logged_in?
 
-    Rails.logger.info("'Pilates Reformer' is visible on the screen")
+    Rails.logger.info("[AllScraper] 'Pilates Reformer' is visible on the screen")
   end
 
   def try_many_times
@@ -125,12 +142,12 @@ class AllScraper
 
   def sleep_random
     random = rand(TIME_RANGE_BETWEEN_RETRIALS)
-    Rails.logger.info("Sleeping for #{random} seconds before retrying")
+    Rails.logger.info("[AllScraper] Sleeping for #{random} seconds before retrying")
     sleep(random)
   end
 
   def visit_pilates_page
-    Rails.logger.info("Visiting Pilates page: #{PILATES_URL}")
+    Rails.logger.info("[AllScraper] Visiting Pilates page: #{PILATES_URL}")
     visit('/')
   end
 
