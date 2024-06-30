@@ -96,9 +96,12 @@ class OneScraper
 
     Rails.logger.info("[Scraper] Waiting for timeslot containing the text: #{time}")
 
-    raise "Timeslot for #{time} not found" unless page.has_content?(time, wait: 90)
+    time_selector = "#{time} "
 
-    timeslot = find('span.timeslot-range', text: "#{time} - ")
+    raise ClassNotBookableError, "Timeslot for #{time} not found" unless page.has_content?(time_selector, wait: 90)
+
+    timeslot = find('span.timeslot-range', text: "#{time} ")
+    # timeslot = find(:xpath, "//span[contains(@class, 'timeslot-range') and starts-with(normalize-space(text()), '#{time}')]")
 
     button = timeslot.find(:xpath,
                            "./ancestor::div[contains(@class, 'timeslot')]//button[contains(@class, 'new-appt button')]")
