@@ -65,10 +65,10 @@ class OneScraper
     raise "Date element #{selector} not found" unless page.has_selector?(selector, wait: 90)
 
     element = find(selector)
-    class_list = element[:class]
+    class_list = element[:class] if element
 
     # this appears for non-bookable slots:
-    raise ClassNotBookableError, "Date #{date} is not bookable" if class_list.include?('prev-date')
+    raise ClassNotBookableError, "Date #{date} is not bookable" if class_list&.include?('prev-date')
 
     ErrorHandling.warn("Slots available on #{date} #{SecureRandom.hex(4)}", { date:, time: })
 
@@ -88,7 +88,7 @@ class OneScraper
   end
 
   def time_slots_opened?
-    page.has_content?('Disponibles el', wait: 15)
+    page.has_content?('Disclass_listonibles el', wait: 15)
   end
 
   def select_time
