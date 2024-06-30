@@ -53,7 +53,7 @@ class AllScraper
       options.add_argument('--no-sandbox')
       options.add_argument('--disable-dev-shm-usage')
       options.add_argument('window-size=1920,1080')
-      options.add_argument('--remote-debugging-port=9222')
+      options.add_argument('--remote-debugging-port=9230')
 
       Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
     end
@@ -77,7 +77,8 @@ class AllScraper
   end
 
   def logged_in?
-    page.has_content?('Pilates Reformer', wait: 90)
+    page.has_content?('Pilates Reformer', wait: 90) &&
+      page.has_content?('Docentes:', wait: 10)
   end
 
   def seeing_login_form?
