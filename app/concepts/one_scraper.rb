@@ -88,7 +88,7 @@ class OneScraper
   end
 
   def time_slots_opened?
-    page.has_content?('Disclass_listonibles el', wait: 15)
+    page.has_content?('Disponibles el', wait: 15)
   end
 
   def select_time

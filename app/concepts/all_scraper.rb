@@ -159,8 +159,8 @@ class AllScraper
   end
 
   def quit_driver
-    Capybara.reset_sessions!
     Capybara.current_session&.driver&.quit
+    Capybara.current_session.reset!
   rescue => e
     Rails.logger.warn("[AllScraper] Could not quit driver: #{e.message}")
     ErrorHandling.notify(e)
