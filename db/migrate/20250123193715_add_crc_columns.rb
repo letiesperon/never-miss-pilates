@@ -1,4 +1,4 @@
-class AddCrcColumns < ActiveRecord::Migration[7.1]
+class AddCRCColumns < ActiveRecord::Migration[7.1]
   def change
     add_column :desired_bookings, :gym, :string
     add_column :bookings, :gym, :string
