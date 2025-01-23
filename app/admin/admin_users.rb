@@ -4,6 +4,13 @@ ActiveAdmin.register AdminUser do
   menu priority: 1
   permit_params :email, :password, :password_confirmation, :crc_user_id, :crc_token
 
+  controller do
+    def update_resource(object, attributes)
+      update_method = attributes.first[:password].present? ? :update : :update_without_password
+      object.send(update_method, *attributes)
+    end
+  end
+
   index do
     selectable_column
     id_column
@@ -40,6 +47,8 @@ ActiveAdmin.register AdminUser do
       f.input :email
       f.input :crc_user_id
       f.input :crc_token, as: :text
+      f.input :password
+      f.input :password_confirmation
     end
     f.actions
   end
