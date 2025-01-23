@@ -40,8 +40,8 @@ gem 'jb' # Override JSON route views
 gem 'sassc-rails'
 gem 'sprockets-rails'
 
-gem 'selenium-webdriver'
 gem 'capybara-screenshot'
+gem 'selenium-webdriver'
 
 # Logging:
 # Compact Rails controller logs in a single log per request:
@@ -53,6 +53,8 @@ gem 'request_store'
 # Ougai is used to structure logs in JSON format:
 gem 'amazing_print'
 gem 'ougai'
+
+gem 'httparty'
 
 # Application Performance Monitoring:
 gem 'newrelic_rpm'

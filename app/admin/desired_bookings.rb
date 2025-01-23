@@ -2,20 +2,24 @@
 
 ActiveAdmin.register DesiredBooking do
   menu priority: 2
-  permit_params :day_of_week, :hour, :enabled
+  permit_params :admin_user_id, :gym, :day_of_week, :hour, :enabled, :preferred_stations
 
-  collection_action :trigger_scraper, method: :post do
-    AllScraper::Worker.perform_async
-    redirect_to collection_path, notice: 'Scraper enqueued'
+  includes :admin_user
+
+  collection_action :trigger_crc_booker, method: :post do
+    CRC::AllBooker::Worker.perform_async
+    redirect_to collection_path, notice: 'Booker enqueued'
   end
 
-  action_item :trigger_scraper, only: :index do
-    link_to 'Run Scraper', trigger_scraper_admin_desired_bookings_path, method: :post
+  action_item :trigger_crc_booker, only: :index do
+    link_to 'Run CRC Booker', trigger_crc_booker_admin_desired_bookings_path, method: :post
   end
 
   index do
     selectable_column
     id_column
+    column :admin_user
+    tag_column :gym
     column :day_of_week
     column :hour
     column :enabled
@@ -23,6 +27,8 @@ ActiveAdmin.register DesiredBooking do
     actions
   end
 
+  filter :admin_user, collection: proc { AdminUser.all }
+  filter :gym, as: :select, collection: Gym::NAMES
   filter :day_of_week
   filter :hour
   filter :enabled
@@ -30,8 +36,11 @@ ActiveAdmin.register DesiredBooking do
   show do
     attributes_table do
       row :id
+      row :admin_user
+      tag_row :gym
       row :day_of_week
       row :hour
+      row :preferred_stations
       tag_row :enabled
       row :created_at
       row :updated_at
@@ -40,8 +49,18 @@ ActiveAdmin.register DesiredBooking do
 
   form do |f|
     f.inputs do
+      f.input :admin_user, collection: AdminUser.all
+      f.input :gym, collection: Gym::NAMES
       f.input :day_of_week
-      f.input :hour
+      f.input :hour,
+              hint: "Only used for CLT pilates. For CRC it's ignored: it's always considered 8am"
+      f.input :preferred_stations,
+              as: :text,
+              hint: "Stations separated by space, comma or line break, in order of preference. eg: '11, 7'",
+              input_html: {
+                rows: 1,
+                value: f.object.preferred_stations&.join(', ')
+              }
       f.input :enabled
     end
     f.actions

@@ -14,27 +14,7 @@
   :dynamic: true
   :enabled: true
   :schedule:
-    scraper_morning_to_midnight:
-      cron: "*/5 10-23 * * *" # Every 5 minutes from 10:00 to 23:59 UTC (7:00 AM to 8:59 PM UYU)
-      class: "AllScraper::Worker"
-      queue: default
-
-    scraper_midnight:
-      cron: "*/5 0-2 * * *" # Every 5 minutes from 00:00 to 02:59 UTC (9:00 PM to 11:59 PM UYU)
-      class: "AllScraper::Worker"
-      queue: default
-
-    scraper_saturday_evening:
-      cron: "* 21-22 * * 6" # Every minute on Saturdays 21:00 to 22:59 UTC (6am to 7:59pm UYU)
-      class: "AllScraper::Worker"
-      queue: default
-
-    scraper_second_saturday_evening:
-      cron: "1-10 22 * * 6" # Every minute for the first 10 minutes on Saturdays at 7pm UYU
-      class: "AllScraper::Worker"
-      queue: default
-
-    scraper_third_saturday_evening:
-      cron: "59 21 * * 6" # At 6:59 PM UYU on Saturdays
-      class: "AllScraper::Worker"
+    crc_booker:
+      cron: "0,1,15 * * * *" # Every hour, at :00, :01 and :15
+      class: "CRC::AllBooker::Worker"
       queue: default

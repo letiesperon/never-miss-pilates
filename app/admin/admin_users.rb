@@ -2,12 +2,13 @@
 
 ActiveAdmin.register AdminUser do
   menu priority: 1
-  permit_params :email, :password, :password_confirmation
+  permit_params :email, :password, :password_confirmation, :crc_user_id, :crc_token
 
   index do
     selectable_column
     id_column
     column :email
+    column :crc_user_id
     column :current_sign_in_at
     column :sign_in_count
     column :created_at
@@ -20,6 +21,8 @@ ActiveAdmin.register AdminUser do
     attributes_table do
       row :id
       row :email
+      row :crc_user_id
+      row :crc_token
       row :current_sign_in_at
       row :sign_in_count
       row :created_at
@@ -35,8 +38,8 @@ ActiveAdmin.register AdminUser do
   form do |f|
     f.inputs do
       f.input :email
-      f.input :password
-      f.input :password_confirmation
+      f.input :crc_user_id
+      f.input :crc_token, as: :text
     end
     f.actions
   end

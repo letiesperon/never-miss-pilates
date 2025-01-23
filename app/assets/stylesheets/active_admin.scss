@@ -78,6 +78,9 @@ $skinLogo: url('/logo-horizontal.png') no-repeat center center;
 .status_tag.yes { background: $green-2; }
 .status_tag.no { background: $orange-2; }
 
+.status_tag.clt { background: #a26432 }
+.status_tag.crc { background: #3278a1 }
+
 .disabled {
   pointer-events: none; // Makes disabled action items not clickable.
 }
