@@ -8,6 +8,10 @@ class AdminUser < ApplicationRecord
   def to_log_hash
     super.merge({ admin_user_email: email })
   end
+
+  def display_name
+    email
+  end
 end
 
 # == Schema Information
@@ -15,6 +19,7 @@ end
 # Table name: admin_users
 #
 #  id                     :bigint           not null, primary key
+#  crc_token              :string
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :string
 #  email                  :string           default(""), not null, indexed
@@ -30,6 +35,7 @@ end
 #  unlock_token           :string
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
+#  crc_user_id            :string
 #
 # Indexes
 #
