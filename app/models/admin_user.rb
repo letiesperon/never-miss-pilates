@@ -19,6 +19,8 @@ end
 # Table name: admin_users
 #
 #  id                     :bigint           not null, primary key
+#  crc_email              :string
+#  crc_password           :string
 #  crc_token              :string
 #  current_sign_in_at     :datetime
 #  current_sign_in_ip     :string

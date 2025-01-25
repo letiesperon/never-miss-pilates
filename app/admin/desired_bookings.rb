@@ -22,7 +22,7 @@ ActiveAdmin.register DesiredBooking do
     tag_column :gym
     column :day_of_week
     column :hour
-    column :enabled
+    toggle_bool_column :enabled
     column :created_at
     actions
   end

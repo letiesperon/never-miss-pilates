@@ -4,10 +4,6 @@ require 'active_job'
 require 'active_support/testing/time_helpers'
 require 'sidekiq/testing'
 
-require 'knapsack_pro'
-
-KnapsackPro::Adapters::RSpecAdapter.bind
-
 RSpec.configure do |config|
   config.include ActiveJob::TestHelper
   config.include ActiveSupport::Testing::TimeHelpers
@@ -65,7 +61,6 @@ RSpec.configure do |config|
   # config.formatter = :documentation
 
   config.after do
-    ActiveStorage::Blob.all.each(&:purge)
     FileUtils.rm_rf(Dir[Rails.root.join('/spec/support/uploads').to_s])
     FileUtils.rm_rf(Dir[Rails.root.join('/tmp/storage').to_s])
     travel_back

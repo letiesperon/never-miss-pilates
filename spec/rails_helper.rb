@@ -28,11 +28,12 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
-  config.fixture_paths = ["#{Rails.root.join('spec/fixtures')}"]
+  config.fixture_paths = [Rails.root.join('spec/fixtures').to_s]
 
   config.include FactoryBot::Syntax::Methods
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Rails.application.routes.url_helpers
+  config.include StubbingHelper
 
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
