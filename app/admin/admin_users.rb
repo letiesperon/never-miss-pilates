@@ -50,7 +50,7 @@ ActiveAdmin.register AdminUser do
   show do
     columns do
       column do
-        attributes_table do
+        attributes_table title: 'General' do
           row :id
           row :email
           row :current_sign_in_at
@@ -66,7 +66,7 @@ ActiveAdmin.register AdminUser do
       end
 
       column do
-        attributes_table 'CRC' do
+        attributes_table title: 'CRC' do
           row :crc_email
           row :crc_password
           row :crc_user_id
