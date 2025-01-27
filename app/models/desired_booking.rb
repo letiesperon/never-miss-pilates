@@ -15,8 +15,11 @@ class DesiredBooking < ApplicationRecord
 
   validates :hour,
             presence: true,
-            numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 24 },
-            uniqueness: { scope: :day_of_week }
+            numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 24 }
+
+  validates :hour, uniqueness: { scope: %i[day_of_week gym admin_user_id] }
+
+  validate :hour_is_8_if_crc
 
   validates :enabled, inclusion: { in: [true, false] }
 
@@ -41,6 +44,14 @@ class DesiredBooking < ApplicationRecord
       preferred_stations: preferred_stations
     }
   end
+
+  private
+
+  def hour_is_8_if_crc
+    return unless gym_crc? && hour != 8
+
+    errors.add(:hour, 'only the 8am class is supported for CRC')
+  end
 end
 
 # == Schema Information
@@ -48,17 +59,17 @@ end
 # Table name: desired_bookings
 #
 #  id                 :bigint           not null, primary key
-#  day_of_week        :string           not null, indexed => [hour]
+#  day_of_week        :string           not null, indexed => [hour, gym, admin_user_id]
 #  enabled            :boolean          default(TRUE), not null
-#  gym                :string           default("crc")
-#  hour               :integer          not null, indexed => [day_of_week]
+#  gym                :string           default("crc"), indexed => [day_of_week, hour, admin_user_id]
+#  hour               :integer          not null, indexed => [day_of_week, gym, admin_user_id]
 #  preferred_stations :integer          is an Array
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
-#  admin_user_id      :bigint           not null, indexed
+#  admin_user_id      :bigint           not null, indexed, indexed => [day_of_week, hour, gym]
 #
 # Indexes
 #
-#  index_desired_bookings_on_admin_user_id         (admin_user_id)
-#  index_desired_bookings_on_day_of_week_and_hour  (day_of_week,hour) UNIQUE
+#  index_desired_bookings_on_admin_user_id  (admin_user_id)
+#  index_desired_bookings_uniq_by_all       (day_of_week,hour,gym,admin_user_id) UNIQUE
 #

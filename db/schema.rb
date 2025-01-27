@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_23_233207) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_27_213713) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -58,7 +58,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_23_233207) do
     t.bigint "admin_user_id", null: false
     t.integer "preferred_stations", array: true
     t.index ["admin_user_id"], name: "index_desired_bookings_on_admin_user_id"
-    t.index ["day_of_week", "hour"], name: "index_desired_bookings_on_day_of_week_and_hour", unique: true
+    t.index ["day_of_week", "hour", "gym", "admin_user_id"], name: "index_desired_bookings_uniq_by_all", unique: true
   end
 
   add_foreign_key "bookings", "admin_users"

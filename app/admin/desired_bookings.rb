@@ -52,8 +52,7 @@ ActiveAdmin.register DesiredBooking do
       f.input :admin_user, collection: AdminUser.all
       f.input :gym, collection: Gym::NAMES
       f.input :day_of_week
-      f.input :hour,
-              hint: "Only used for CLT pilates. For CRC it's ignored: it's always considered 8am"
+      f.input :hour
       f.input :preferred_stations,
               as: :text,
               hint: "Stations separated by space, comma or line break, in order of preference. eg: '11, 7'",
