@@ -19,8 +19,6 @@ class DesiredBooking < ApplicationRecord
 
   validates :hour, uniqueness: { scope: %i[day_of_week gym admin_user_id] }
 
-  validate :hour_is_8_if_crc
-
   validates :enabled, inclusion: { in: [true, false] }
 
   scope :enabled, -> { where(enabled: true) }
@@ -43,14 +41,6 @@ class DesiredBooking < ApplicationRecord
       enabled: enabled,
       preferred_stations: preferred_stations
     }
-  end
-
-  private
-
-  def hour_is_8_if_crc
-    return unless gym_crc? && hour != 8
-
-    errors.add(:hour, 'only the 8am class is supported for CRC')
   end
 end
 

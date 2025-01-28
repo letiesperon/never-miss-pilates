@@ -12,8 +12,9 @@ module CRC
 
     attr_reader :response
 
-    def initialize(datetime:, station:, crc_token:, crc_user_id:)
+    def initialize(datetime:, class_id:, station:, crc_token:, crc_user_id:)
       @datetime = datetime
+      @class_id = class_id
       @station = station
       @crc_token = crc_token
       @crc_user_id = crc_user_id
@@ -45,13 +46,13 @@ module CRC
 
     private
 
-    attr_reader :datetime, :station, :crc_token, :crc_user_id
+    attr_reader :datetime, :class_id, :station, :crc_token, :crc_user_id
 
     def make_httparty_request
       @response = HTTParty.post(
         BOOKING_URL,
         body: {
-          classId: ::Gym::CRC_CYCLING_CLASS_ID,
+          classId: class_id,
           station:,
           partitionDate: partition_date,
           userId: crc_user_id

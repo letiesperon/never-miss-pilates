@@ -20,27 +20,6 @@ RSpec.describe DesiredBooking, type: :model do
     it { is_expected.to validate_inclusion_of(:enabled).in_array([true, false]) }
   end
 
-  describe 'custom validation: hour_is_8_if_crc' do
-    let(:booking) { build(:desired_booking, gym: 'crc', hour: 9) }
-
-    it 'adds an error if gym is crc and hour is not 8' do
-      booking.valid?
-      expect(booking.errors[:hour]).to include('only the 8am class is supported for CRC')
-    end
-
-    it 'does not add error if gym is crc and hour is 8' do
-      booking.hour = 8
-      booking.valid?
-      expect(booking.errors[:hour]).to be_empty
-    end
-
-    it 'does not add error if gym is not crc' do
-      booking.gym = 'other_gym'
-      booking.valid?
-      expect(booking.errors[:hour]).to be_empty
-    end
-  end
-
   describe '.enabled' do
     let!(:booking_enabled) { create(:desired_booking, enabled: true) }
     let!(:booking_disabled) { create(:desired_booking, enabled: false) }

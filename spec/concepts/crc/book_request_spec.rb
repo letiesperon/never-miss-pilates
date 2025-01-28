@@ -2,11 +2,11 @@
 
 RSpec.describe CRC::BookRequest do
   subject(:book_request) do
-    described_class.new(datetime: datetime, station: station, crc_token: crc_token,
-                        crc_user_id: crc_user_id)
+    described_class.new(datetime:, class_id:, station:, crc_token:, crc_user_id:)
   end
 
   let(:datetime) { Time.current }
+  let(:class_id) { 'class-1234' }
   let(:station) { 1 }
   let(:crc_token) { 'valid_token' }
   let(:crc_user_id) { '123' }
@@ -30,7 +30,7 @@ RSpec.describe CRC::BookRequest do
       expect(HTTParty).to have_received(:post).with(
         CRC::BookRequest::BOOKING_URL,
         body: {
-          classId: Gym::CRC_CYCLING_CLASS_ID,
+          classId: 'class-1234',
           station: station,
           partitionDate: datetime.strftime('%Y%m%d').to_i,
           userId: crc_user_id

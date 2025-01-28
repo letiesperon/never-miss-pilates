@@ -22,10 +22,17 @@ RSpec.describe CRC::OneBooker do
                methods: { authenticate: nil, success?: true })
   end
 
+  let!(:class_finder) do
+    stub_class(CRC::ClassFinder,
+               params: [datetime: expected_booking_datetime],
+               methods: { find!: nil, class_id: 'class-1234' })
+  end
+
   let!(:book_request) do
     stub_class(CRC::BookRequest,
                params: [
                  datetime: expected_booking_datetime,
+                 class_id: 'class-1234',
                  station: 3,
                  crc_token: crc_token,
                  crc_user_id: crc_user_id
@@ -119,6 +126,7 @@ RSpec.describe CRC::OneBooker do
         stub_class(CRC::BookRequest,
                    params: [
                      datetime: expected_booking_datetime,
+                     class_id: 'class-1234',
                      station: station,
                      crc_token: crc_token,
                      crc_user_id: crc_user_id

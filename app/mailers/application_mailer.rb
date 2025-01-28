@@ -29,6 +29,6 @@ class ApplicationMailer < ActionMailer::Base
 
     Rails.logger.info("[Emails] Sending #{self.class.name} email", to:, template_id:)
 
-    super(args)
+    super
   end
 end

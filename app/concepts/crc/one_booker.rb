@@ -22,13 +22,14 @@ module CRC
           next
         end
 
+        find_class_id
         make_booking
       end
     end
 
     private
 
-    attr_reader :desired_booking
+    attr_reader :desired_booking, :class_id
 
     def with_lock_on_desired_booking(&)
       desired_booking.with_lock(&)
@@ -80,6 +81,12 @@ module CRC
       Rails.logger.info('[CRC] [Booker] Starting to book class', debugging_hash)
     end
 
+    def find_class_id
+      class_finder = CRC::ClassFinder.new(datetime:)
+      class_finder.find!
+      @class_id = class_finder.class_id
+    end
+
     def make_booking
       stations.each do |station|
         2.times do
@@ -110,6 +117,7 @@ module CRC
     def book_request(station)
       CRC::BookRequest.new(
         datetime: datetime,
+        class_id:,
         station: station,
         crc_token: admin_user.crc_token,
         crc_user_id: admin_user.crc_user_id

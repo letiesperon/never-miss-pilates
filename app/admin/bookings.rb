@@ -12,7 +12,9 @@ ActiveAdmin.register Booking do
     id_column
     column :admin_user
     tag_column :gym
-    column :starts_at
+    column 'Time (mvdeo)' do |booking|
+      booking.starts_at.in_time_zone('America/Montevideo').strftime('%Y-%m-%d %H:%M')
+    end
     column :created_at
     actions
   end

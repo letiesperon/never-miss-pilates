@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # at_exit do
 #   begin
 #     puts 'Closing LaunchDarkly client...'
