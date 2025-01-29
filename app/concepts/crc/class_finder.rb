@@ -2,8 +2,8 @@
 
 module CRC
   class ClassFinder
-    class ClassNotFoundError < StandardError; end
-    class InvalidResponseError < StandardError; end
+    class ClassNotFoundError < ErrorWithMetadata; end
+    class InvalidResponseError < ErrorWithMetadata; end
 
     def initialize(datetime:)
       @datetime = datetime
@@ -38,7 +38,8 @@ module CRC
 
         class_name.downcase.include?('cycle') && class_start_time.to_i == datetime.to_i
       rescue KeyError => e
-        raise InvalidResponseError, "Unexpected response format. #{e.inspect} - #{response}"
+        raise InvalidResponseError.new('Unexpected response format',
+                                       debugging_hash.merge(exception: e))
       end
     end
 
@@ -51,7 +52,11 @@ module CRC
     def validate_class_exists!
       return if cycling_class
 
-      raise ClassNotFoundError, 'No cycling class found in the given time'
+      raise ClassNotFoundError.new('No cycling class found', debugging_hash)
+    end
+
+    def debugging_hash
+      { datetime:, response: }
     end
   end
 end
