@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :desired_booking do
     gym { Gym::NAMES.sample }
     day_of_week { %i[monday tuesday wednesday thursday friday saturday sunday].sample }
-    hour { gym == 'crc' ? 8 : Faker::Number.between(from: 0, to: 23) }
+    time { Faker::Time.backward }
     enabled { Faker::Boolean.boolean }
 
     preferred_stations do

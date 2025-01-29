@@ -8,7 +8,7 @@ RSpec.describe CRC::OneBooker do
            :crc,
            admin_user:,
            preferred_stations: [3, 4, 5],
-           hour: 8,
+           time: '8:00',
            day_of_week:)
   end
 

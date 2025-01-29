@@ -15,6 +15,6 @@
   :enabled: true
   :schedule:
     crc_booker:
-      cron: "0,1,5,10,15,30,45 * * * *"
+      cron: "*/5 * * * *" # Every 5 minutes
       class: "CRC::AllBooker::Worker"
       queue: default

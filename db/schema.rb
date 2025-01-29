@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_27_213713) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_29_224952) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,15 +50,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_27_213713) do
 
   create_table "desired_bookings", force: :cascade do |t|
     t.string "day_of_week", null: false
-    t.integer "hour", null: false
     t.boolean "enabled", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "gym", default: "crc"
     t.bigint "admin_user_id", null: false
     t.integer "preferred_stations", array: true
+    t.time "time", null: false
     t.index ["admin_user_id"], name: "index_desired_bookings_on_admin_user_id"
-    t.index ["day_of_week", "hour", "gym", "admin_user_id"], name: "index_desired_bookings_uniq_by_all", unique: true
   end
 
   add_foreign_key "bookings", "admin_users"

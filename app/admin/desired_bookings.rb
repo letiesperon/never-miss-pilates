@@ -2,7 +2,7 @@
 
 ActiveAdmin.register DesiredBooking do
   menu priority: 2
-  permit_params :admin_user_id, :gym, :day_of_week, :hour, :enabled, :preferred_stations
+  permit_params :admin_user_id, :gym, :day_of_week, :time, :enabled, :preferred_stations
 
   includes :admin_user
 
@@ -21,7 +21,9 @@ ActiveAdmin.register DesiredBooking do
     column :admin_user
     tag_column :gym
     column :day_of_week
-    column :hour
+    column :time do |desired_booking|
+      desired_booking.time.strftime('%H:%M')
+    end
     toggle_bool_column :enabled
     column :created_at
     actions
@@ -30,7 +32,6 @@ ActiveAdmin.register DesiredBooking do
   filter :admin_user, collection: proc { AdminUser.all }
   filter :gym, as: :select, collection: Gym::NAMES
   filter :day_of_week
-  filter :hour
   filter :enabled
 
   show do
@@ -39,7 +40,9 @@ ActiveAdmin.register DesiredBooking do
       row :admin_user
       tag_row :gym
       row :day_of_week
-      row :hour
+      row :time do |desired_booking|
+        desired_booking.time.strftime('%H:%M')
+      end
       row :preferred_stations
       tag_row :enabled
       row :created_at
@@ -50,9 +53,15 @@ ActiveAdmin.register DesiredBooking do
   form do |f|
     f.inputs do
       f.input :admin_user, collection: AdminUser.all
+
       f.input :gym, collection: Gym::NAMES
+
       f.input :day_of_week
-      f.input :hour
+
+      f.input :time,
+              as: :time_picker,
+              input_html: { value: f.object.time&.strftime('%H:%M') || '08:00' }
+
       f.input :preferred_stations,
               as: :text,
               hint: "Stations separated by space, comma or line break, in order of preference. eg: '11, 7'",
@@ -60,6 +69,7 @@ ActiveAdmin.register DesiredBooking do
                 rows: 1,
                 value: f.object.preferred_stations&.join(', ')
               }
+
       f.input :enabled
     end
     f.actions

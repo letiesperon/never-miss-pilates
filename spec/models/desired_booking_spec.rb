@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe DesiredBooking, type: :model do
+RSpec.describe DesiredBooking do
   describe 'associations' do
     it { is_expected.to belong_to(:admin_user) }
   end
@@ -8,14 +8,7 @@ RSpec.describe DesiredBooking, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:gym) }
     it { is_expected.to validate_presence_of(:day_of_week) }
-    it { is_expected.to validate_presence_of(:hour) }
-
-    it {
-      is_expected.to validate_numericality_of(:hour)
-        .only_integer
-        .is_greater_than_or_equal_to(0)
-        .is_less_than(24)
-    }
+    it { is_expected.to validate_presence_of(:time) }
 
     it { is_expected.to validate_inclusion_of(:enabled).in_array([true, false]) }
   end
@@ -46,25 +39,25 @@ RSpec.describe DesiredBooking, type: :model do
   describe '#to_log_hash' do
     let(:admin_user) { create(:admin_user, email: 'example@example.com') }
 
-    let(:booking) do
+    let(:desired_booking) do
       create(:desired_booking,
              admin_user:,
              gym: 'crc',
              day_of_week: 'monday',
-             hour: 8,
+             time: '08:00',
              enabled: true, preferred_stations: [1, 2])
     end
 
     it 'returns a hash with booking and admin details' do
-      expect(booking.to_log_hash).to eq({
-                                          desired_booking_id: booking.id,
-                                          admin_user: 'example@example.com',
-                                          gym: 'crc',
-                                          day_of_week: 'monday',
-                                          hour: 8,
-                                          enabled: true,
-                                          preferred_stations: [1, 2]
-                                        })
+      expect(desired_booking.to_log_hash).to eq({
+                                                  desired_booking_id: desired_booking.id,
+                                                  admin_user: 'example@example.com',
+                                                  gym: 'crc',
+                                                  day_of_week: 'monday',
+                                                  time: '08:00',
+                                                  enabled: true,
+                                                  preferred_stations: [1, 2]
+                                                })
     end
   end
 end

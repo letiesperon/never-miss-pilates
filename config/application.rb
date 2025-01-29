@@ -31,6 +31,8 @@ module VillageApi
     #
     # config.eager_load_paths << Rails.root.join("extras")
 
+    config.time_zone = 'America/Montevideo'
+
     config.active_job.queue_adapter = :sidekiq
 
     # Only loads a smaller set of middleware suitable for API only apps.
