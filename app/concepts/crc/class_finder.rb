@@ -34,9 +34,31 @@ module CRC
     def search_class_in_response
       @cycling_class = response.find do |class_entry|
         class_name = class_entry.fetch('name')
-        class_start_time = parse_hour(class_entry.fetch('startDate'))
+        class_name_matches = class_name.downcase.include?('cycle')
 
-        class_name.downcase.include?('cycle') && class_start_time.to_i == datetime.to_i
+        class_start_date_raw = class_entry.fetch('startDate')
+        class_start_time = parse_hour(class_start_date_raw)
+        class_start_time_to_i = class_start_time.to_i
+        datetime_to_i = datetime.to_i
+        class_time_matches = class_start_time_to_i == datetime_to_i
+
+        matches = class_name_matches && class_time_matches
+
+        unless matches
+          Bugsnag.leave_breadcrumb(
+            'Class not matched',
+            datetime:,
+            class_name_matches:,
+            class_time_matches:,
+            class_name:,
+            class_start_date_raw:,
+            class_start_time:,
+            class_start_time_to_i:,
+            datetime_to_i:
+          )
+        end
+
+        matches
       rescue KeyError => e
         raise InvalidResponseError.new('Unexpected response format',
                                        debugging_hash.merge(exception: e))
@@ -45,8 +67,6 @@ module CRC
 
     def parse_hour(datetime)
       Time.parse(datetime)
-    rescue ArgumentError
-      nil
     end
 
     def validate_class_exists!

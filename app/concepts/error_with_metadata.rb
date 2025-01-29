@@ -9,6 +9,6 @@ class ErrorWithMetadata < StandardError
   end
 
   def bugsnag_meta_data
-    { tabname: metadata }
+    { debugging_info: metadata }
   end
 end
