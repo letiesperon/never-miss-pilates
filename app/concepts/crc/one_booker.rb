@@ -12,7 +12,12 @@ module CRC
 
     def perform
       with_lock_on_desired_booking do
-        next if already_booked?
+        log_start
+
+        if already_booked?
+          log_already_booked
+          return
+        end
 
         validate_credentials_present
         next if failure?
@@ -23,16 +28,23 @@ module CRC
         end
 
         find_class_id
-        make_booking
+        attempt_bookings
       end
     end
 
     private
 
-    attr_reader :desired_booking, :class_id
+    attr_reader :desired_booking, :class_id, :book_request
+
+    delegate :admin_user, to: :desired_booking
+    delegate :crc_token, :crc_user_id, to: :admin_user
 
     def with_lock_on_desired_booking(&)
       desired_booking.with_lock(&)
+    end
+
+    def log_start
+      Rails.logger.info('[CRC] [Booker] Starting to process booking', debugging_hash)
     end
 
     def already_booked?
@@ -41,7 +53,9 @@ module CRC
                       admin_user: desired_booking.admin_user)
     end
 
-    delegate :admin_user, to: :desired_booking
+    def log_already_booked
+      Rails.logger.info('[CRC] [Booker] Skipping because already booked', debugging_hash)
+    end
 
     def booking_datetime
       @booking_datetime ||= NextDatetimeCalculator.next_datetime(desired_booking)
@@ -60,14 +74,6 @@ module CRC
       crc_token.blank? || crc_user_id.blank?
     end
 
-    def crc_token
-      desired_booking.admin_user.crc_token
-    end
-
-    def crc_user_id
-      desired_booking.admin_user.crc_user_id
-    end
-
     def too_far_in_advance?
       datetime > BOOKINGS_OPEN_IN_ADVANCE.from_now
     end
@@ -77,65 +83,63 @@ module CRC
                         debugging_hash)
     end
 
-    def log_start
-      Rails.logger.info('[CRC] [Booker] Starting to book class', debugging_hash)
-    end
-
     def find_class_id
       class_finder = CRC::ClassFinder.new(datetime:)
       class_finder.find!
       @class_id = class_finder.class_id
     end
 
-    def make_booking
+    def attempt_bookings
       stations.each do |station|
+        # Repeating 2 times because if unauthorized,
+        # we need to retry the same station after re-authenticating:
         2.times do
-          request = book_request(station)
-          request.make_request
+          make_book_request(station)
 
-          if request.success? || request.already_booked?
+          if book_request_succeeded?
             record_booking
             log_success
-            return
-          elsif request.unauthorized?
+            return # Exit entirely
+          elsif book_request_unauthorized?
             authenticate
             unless success?
               log_failed_authentication
-              return
+              return # Exit entirely
             end
             next # Retry the same station after re-authenticating
-          elsif request.place_not_available?
+          elsif book_request_place_not_available?
             break # Move to the next station
           else
             log_bad_request
-            return # Exit entirely on bad request
+            return # Exit entirely
           end
         end
       end
     end
 
-    def book_request(station)
-      CRC::BookRequest.new(
+    def stations
+      # adding nil as a last option so that CRC automatically assigns a spot if the user
+      # doesn't have a preference or all preferred stations are full
+      (desired_booking.preferred_stations || []) << nil
+    end
+
+    def make_book_request(station)
+      @book_request = CRC::BookRequest.new(
         datetime: datetime,
         class_id:,
         station: station,
         crc_token: admin_user.crc_token,
         crc_user_id: admin_user.crc_user_id
       )
+
+      book_request.make_request
     end
 
-    def log_failed_authentication
-      Rails.logger.error('[CRC] [Booker] Failed to authenticate user', debugging_hash)
+    def book_request_succeeded?
+      book_request.success? || book_request.already_booked?
     end
 
-    def log_bad_request
-      Rails.logger.error('[CRC] [Booker] Bad request', debugging_hash)
-    end
-
-    def stations
-      # adding nil as a last option so that CRC automatically assigns a spot
-      (desired_booking.preferred_stations || []) << nil
-    end
+    delegate :unauthorized?, :place_not_available?, to: :book_request, prefix: true
 
     def record_booking
       Booking.find_or_create_by!(starts_at: datetime,
@@ -154,6 +158,14 @@ module CRC
       return if authenticator.success?
 
       add_errors(authenticator.errors)
+    end
+
+    def log_failed_authentication
+      Rails.logger.error('[CRC] [Booker] Failed to authenticate user', debugging_hash)
+    end
+
+    def log_bad_request
+      Rails.logger.error('[CRC] [Booker] Bad request', debugging_hash)
     end
 
     def debugging_hash
