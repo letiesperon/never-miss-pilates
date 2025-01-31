@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_31_000942) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_31_010019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,7 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_31_000942) do
     t.string "gym", default: "crc"
     t.bigint "admin_user_id", null: false
     t.index ["admin_user_id"], name: "index_bookings_on_admin_user_id"
-    t.index ["starts_at"], name: "index_bookings_on_starts_at", unique: true
+    t.index ["starts_at", "admin_user_id", "gym"], name: "index_bookings_on_starts_at_and_admin_user_id_and_gym", unique: true
   end
 
   create_table "desired_bookings", force: :cascade do |t|

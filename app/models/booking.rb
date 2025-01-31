@@ -16,14 +16,14 @@ end
 # Table name: bookings
 #
 #  id            :bigint           not null, primary key
-#  gym           :string           default("crc")
-#  starts_at     :datetime         not null, indexed
+#  gym           :string           default("crc"), indexed => [starts_at, admin_user_id]
+#  starts_at     :datetime         not null, indexed => [admin_user_id, gym]
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  admin_user_id :bigint           not null, indexed
+#  admin_user_id :bigint           not null, indexed, indexed => [starts_at, gym]
 #
 # Indexes
 #
-#  index_bookings_on_admin_user_id  (admin_user_id)
-#  index_bookings_on_starts_at      (starts_at) UNIQUE
+#  index_bookings_on_admin_user_id                        (admin_user_id)
+#  index_bookings_on_starts_at_and_admin_user_id_and_gym  (starts_at,admin_user_id,gym) UNIQUE
 #
