@@ -52,7 +52,7 @@ RSpec.describe CRC::BookRequest do
     let(:response) do
       instance_double(HTTParty::Response,
                       code: 200,
-                      parsed_response: { 'result' => 'AlreadyBooked' })
+                      parsed_response: { 'result' => 'UserAlreadyBooked' })
     end
 
     it 'identifies the booking as already booked' do

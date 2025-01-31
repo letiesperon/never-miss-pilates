@@ -7,7 +7,7 @@ module CRC
   class BookRequest
     BOOKING_URL = 'https://calendar.mywellness.com/v2/enduser/class/book'
     SUCCESS_RESULT = 'Booked'
-    ALREADY_BOOKED_RESULT = 'AlreadyBooked'
+    ALREADY_BOOKED_RESULT = 'UserAlreadyBooked'
     PLACE_NOT_AVAILABLE_RESULT = 'PlaceNotAvailable'
 
     attr_reader :response
