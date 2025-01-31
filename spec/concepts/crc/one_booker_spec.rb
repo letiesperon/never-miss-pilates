@@ -67,6 +67,8 @@ RSpec.describe CRC::OneBooker do
     let(:crc_user_id) { nil }
 
     it 'errors with missing credentials' do
+      expect(BookingNotifier::Worker).not_to receive(:perform_async)
+
       expect { one_booker.perform }.not_to change(Booking, :count)
 
       expect(one_booker).to be_failure
@@ -80,6 +82,8 @@ RSpec.describe CRC::OneBooker do
     let(:day_of_week) { 'monday' }
 
     it 'skips' do
+      expect(BookingNotifier::Worker).not_to receive(:perform_async)
+
       expect { one_booker.perform }.not_to change(Booking, :count)
 
       expect(one_booker).to be_success
@@ -94,6 +98,8 @@ RSpec.describe CRC::OneBooker do
     end
 
     it 'skips', :aggregate_failures do
+      expect(BookingNotifier::Worker).not_to receive(:perform_async)
+
       expect { one_booker.perform }.not_to change(Booking, :count)
 
       expect(book_request).not_to have_received(:make_request)
@@ -105,6 +111,10 @@ RSpec.describe CRC::OneBooker do
 
   context 'when booking succeeds on the first station' do
     it 'creates a new booking', :aggregate_failures do
+      expect(BookingNotifier::Worker)
+        .to receive(:perform_async)
+        .with(an_instance_of(Integer))
+
       expect { one_booker.perform }.to change(Booking, :count).by(1)
 
       expect(book_request).to have_received(:make_request)
@@ -142,6 +152,8 @@ RSpec.describe CRC::OneBooker do
     end
 
     it 'does not create a booking' do
+      expect(BookingNotifier::Worker).not_to receive(:perform_async)
+
       expect { one_booker.perform }.not_to change(Booking, :count)
     end
   end

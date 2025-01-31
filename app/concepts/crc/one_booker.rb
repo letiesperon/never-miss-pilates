@@ -34,7 +34,7 @@ module CRC
 
     private
 
-    attr_reader :desired_booking, :class_id, :book_request
+    attr_reader :desired_booking, :class_id, :book_request, :booking
 
     delegate :admin_user, to: :desired_booking
     delegate :crc_token, :crc_user_id, to: :admin_user
@@ -99,6 +99,7 @@ module CRC
           if book_request_succeeded?
             record_booking
             log_success
+            enqueue_success_notifier
             return # Exit entirely
           elsif book_request_unauthorized?
             authenticate
@@ -142,13 +143,17 @@ module CRC
     delegate :unauthorized?, :place_not_available?, to: :book_request, prefix: true
 
     def record_booking
-      Booking.find_or_create_by!(starts_at: datetime,
-                                 admin_user: desired_booking.admin_user,
-                                 gym: desired_booking.gym)
+      @booking = Booking.find_or_create_by!(starts_at: datetime,
+                                            admin_user: desired_booking.admin_user,
+                                            gym: desired_booking.gym)
     end
 
     def log_success
       Rails.logger.info('[CRC] Successfully booked class', debugging_hash)
+    end
+
+    def enqueue_success_notifier
+      BookingNotifier::Worker.perform_async(booking.id)
     end
 
     def authenticate

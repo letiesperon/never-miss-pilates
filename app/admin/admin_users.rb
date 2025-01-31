@@ -3,8 +3,9 @@
 ActiveAdmin.register AdminUser do
   menu priority: 1
 
-  permit_params :email, :password, :password_confirmation, :crc_user_id, :crc_token, :crc_email,
-                :crc_password
+  permit_params :email, :phone_number,
+                :password, :password_confirmation,
+                :crc_email, :crc_password
 
   member_action :authenticate_crc, method: :post do
     admin_user = AdminUser.find(params[:id])
@@ -53,6 +54,7 @@ ActiveAdmin.register AdminUser do
         attributes_table title: 'General' do
           row :id
           row :email
+          row :phone_number
           row :current_sign_in_at
           row :sign_in_count
           row :created_at
@@ -79,11 +81,13 @@ ActiveAdmin.register AdminUser do
   form do |f|
     f.inputs do
       f.input :email
+      f.input :phone_number, as: :string, hint: 'In format 598xxxxxxxx'
       f.input :crc_email
       f.input :crc_password, as: :string
       f.input :password
       f.input :password_confirmation
     end
+
     f.actions
   end
 end
