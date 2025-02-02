@@ -8,7 +8,7 @@ class Booking < ApplicationRecord
   enumerize :gym, in: Gym::NAMES, scope: :shallow, predicates: { prefix: true }
 
   validates :gym, presence: true
-  validates :starts_at, presence: true, uniqueness: true
+  validates :starts_at, presence: true, uniqueness: { scope: %i[admin_user_id gym] }
 end
 
 # == Schema Information
