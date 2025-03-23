@@ -39,12 +39,6 @@ module CRC
       end
     end
 
-    def handle_unexpected_exception(e)
-      Rails.logger.error("[AllBooker] Unexpected exception: #{e.message}")
-      add_error(:base, e.inspect)
-      ErrorHandling.notify(e)
-    end
-
     def log_end
       Rails.logger.info('[AllBooker] Finished')
     end
